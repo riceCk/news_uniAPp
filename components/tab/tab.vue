@@ -23,12 +23,21 @@
 			tableList: {
 				type: Array,
 				default: []
+			},
+			tabIndex: {
+				type: Number,
+				default: 0
 			}
 		},
 		data() {
 			return {
 				activeIndex: 0,
 			};
+		},
+		watch: {
+			tabIndex (newVal) {
+				this.activeIndex = newVal
+			}
 		},
 		methods: {
 			clickTable (item, index) {

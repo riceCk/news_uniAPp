@@ -6,3 +6,11 @@ export const get_label = (data) => {
 		data
 	})
 }
+
+export const get_list = (data) => {
+	// 请求云函数
+	return $http({
+		url: 'get_list',
+		data
+	})
+}

@@ -3,18 +3,18 @@
 		<!-- 基础卡片 -->
 		<view v-if="mode === 'base'" class="listcard">
 			<view class="listcard-image">
-				<image src="../../static/logo.png" mode="aspectFill"></image>
+				<image :src="item.cover.length > 0 && item.cover[0]"  mode="aspectFill"></image>
 			</view>
 			<view class="listcard-content">
 				<view class="listcard-content__title">
-					uni-app开放框架
+					{{item.title}}
 				</view>
 				<view class="listcard-content__des">
 					<view class="listcard-content__des-label">
-						<view class="listcard-content__des-label-item">前端</view>
+						<view class="listcard-content__des-label-item">{{item.classify}}</view>
 						
 						</view>
-					<view class="listcard-content__des-browse">120 浏览</view>
+					<view class="listcard-content__des-browse">{{item.browse_count || 0}} 浏览</view>
 				</view>
 			</view>
 		</view>
@@ -24,19 +24,19 @@
 		<view v-if="mode === 'image'" class="listcard mode-column">
 			<view class="listcard-content">
 				<view class="listcard-content__title">
-					uni-app开放框架
+					{{item.title}}
 				</view>
 				<view class="listcard-image">
-					<view v-for="item in 3" :key="item" class="listcard-image__item">
-						<image src="../../static/logo.png" mode="aspectFill"></image>
+					<view v-if="index <= 3" v-for="(list, index) in item.cover" :key="index" class="listcard-image__item">
+						<image :src="list" mode="aspectFill"></image>
 					</view>
 				</view>
 				<view class="listcard-content__des">
 					<view class="listcard-content__des-label">
-						<view class="listcard-content__des-label-item">前端</view>
+						<view class="listcard-content__des-label-item">{{item.classify}}</view>
 						
 						</view>
-					<view class="listcard-content__des-browse">120 浏览</view>
+					<view class="listcard-content__des-browse">{{item.browse_count || 0}} 浏览</view>
 				</view>
 			</view>
 		</view>
@@ -44,18 +44,18 @@
 		<!-- 大图模式 -->
 		<view v-if="mode === 'column'" class="listcard mode-image">
 			<view class="listcard-image">
-				<image src="../../static/logo.png" mode="aspectFill"></image>
+				<image :src="item.cover.length > 0 && item.cover[0]" mode="aspectFill"></image>
 			</view>
 			<view class="listcard-content">
 				<view class="listcard-content__title">
-					uni-app开放框架
+					{{item.title}}
 				</view>
 				<view class="listcard-content__des">
 					<view class="listcard-content__des-label">
-						<view class="listcard-content__des-label-item">前端</view>
+						<view class="listcard-content__des-label-item">{{item.classify}}</view>
 						
 						</view>
-					<view class="listcard-content__des-browse">120 浏览</view>
+					<view class="listcard-content__des-browse">{{item.browse_count || 0}} 浏览</view>
 				</view>
 			</view>
 		</view>
@@ -68,6 +68,12 @@
 			mode: {
 				type: String,
 				default: "base"
+			},
+			item: {
+				type: Object,
+				default () {
+					return {}
+				}
 			}
 		},
 		data() {

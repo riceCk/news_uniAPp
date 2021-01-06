@@ -2,26 +2,21 @@
 	<view class="home">
 		<!-- 自定义组件 -->
 		<navbar></navbar>
-		<tab @tab="tab" :tableList="tableList"></tab>
-		<list-scroll>
-			<list-card mode="base"></list-card>
-			<list-card mode="image"></list-card>
-			<list-card mode="column"></list-card>
-		</list-scroll>
+		<tab @tab="tab" :tabIndex="tabIndex" :tableList="tableList"></tab>
+		<view class="home-list">
+			<list :tabIndex="tabIndex" :tab="tableList" @change="change"></list>
+		</view>
 	</view>
 </template>
 
 <script>
 	// easyCom components/组件名/组件名.vue  局部引入
-	import listCard from '../../../components/list-card/list-card.vue'
 	export default {
-		components: {
-			listCard
-		},
 		data() {
 			return {
 				title: 'Hello',
-				tableList: []
+				tableList: [],
+				tabIndex: 0, // 内容滑动index
 			}
 		},
 		onLoad() {
@@ -36,11 +31,11 @@
 				} = await this.$api.get_label()
 				this.tableList = data
 			},
-			tab({
-				data,
-				index
-			}) {
-				console.log(data, index)
+			tab({data,index}) {
+				this.tabIndex = index
+			},
+			change (current) {
+				this.tabIndex = current
 			}
 		}
 	}

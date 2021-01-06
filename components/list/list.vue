@@ -1,7 +1,7 @@
 <template>
 	<swiper :current="tabIndex" class="home-swiper" @change="change">
 		<swiper-item v-for="(item, index) in tab" :key="index" class="swiper-item">
-			<list-item :list="listCatchData[index]"></list-item>
+			<list-item :list="listCatchData[index]" :load="load[index]" @loadmore="loadmore"></list-item>
 		</swiper-item>
 	</swiper>
 </template>
@@ -25,6 +25,8 @@
 			return {
 				list: [],
 				listCatchData: {},
+				load: {},
+				pageSize: 10
 			};
 		},
 		watch: {
@@ -35,23 +37,46 @@
 		},
 		created() {},
 		methods: {
+			loadmore () {
+				if (this.load[this.tabIndex].loading === 'noMore') return
+				this.load[this.tabIndex].page++
+				this.getList(this.tabIndex)
+			},
 			change(e) {
 				const {
 					current
 				} = e.detail
 				this.$emit('change', current)
-				console.log(this.listCatchData[current], 99999999)
 				if (!this.listCatchData[current]) {
 					this.getList(current)
 				}
 			},
 			async getList(current) {
+				if (!this.load[current]) {
+					this.load[current] = {
+						page: 1,
+						loading: 'loading'
+					}
+				}
 				const {
 					data
 				} = await this.$api.get_list({
-					name: this.tab[current].name
+					name: this.tab[current].name,
+					page: this.load[current].page,
+					pageSize: this.pageSize
 				})
-				this.$set(this.listCatchData, current, data)
+				if (data.length === 0) {
+					let oldLoad = {
+						...this.load[current],
+						loading: 'noMore'
+					}
+					this.$set(this.load, current, oldLoad)
+					this.$forceUpdate()
+					return
+				}
+				let oldList = this.listCatchData[current] || []
+				oldList.push(...data)
+				this.$set(this.listCatchData, [current], oldList)
 			}
 		}
 	}

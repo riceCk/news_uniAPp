@@ -25,11 +25,22 @@
 		methods: {
 			async getLabel() {
 				// 请求云函数
-				const {
+				let {
 					code,
 					data
 				} = await this.$api.get_label()
-				this.tableList = data
+				let markObj = {}
+				let newData = []
+				data.forEach(item => {
+					if (!markObj[item.name]) {
+						newData.push(item)
+						markObj[item.name] = true
+					} 
+				})
+				newData.unshift({
+					name: '全部'
+				})
+				this.tableList = newData
 			},
 			tab({data,index}) {
 				this.tabIndex = index

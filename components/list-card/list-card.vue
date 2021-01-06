@@ -1,13 +1,14 @@
 <template>
-	<view>
+	<view @click="open">
 		<!-- 基础卡片 -->
 		<view v-if="mode === 'base'" class="listcard">
 			<view class="listcard-image">
-				<image :src="item.cover.length > 0 && item.cover[0]"  mode="aspectFill"></image>
+				<image :src="item.cover[0]"  mode="aspectFill"></image>
 			</view>
 			<view class="listcard-content">
 				<view class="listcard-content__title">
-					{{item.title}}
+					<text>{{item.title}}</text>
+					<likes></likes>
 				</view>
 				<view class="listcard-content__des">
 					<view class="listcard-content__des-label">
@@ -24,7 +25,8 @@
 		<view v-if="mode === 'image'" class="listcard mode-column">
 			<view class="listcard-content">
 				<view class="listcard-content__title">
-					{{item.title}}
+					<text>{{item.title}}</text>
+					<likes></likes>
 				</view>
 				<view class="listcard-image">
 					<view v-if="index <= 3" v-for="(list, index) in item.cover" :key="index" class="listcard-image__item">
@@ -44,11 +46,12 @@
 		<!-- 大图模式 -->
 		<view v-if="mode === 'column'" class="listcard mode-image">
 			<view class="listcard-image">
-				<image :src="item.cover.length > 0 && item.cover[0]" mode="aspectFill"></image>
+				<image :src="item.cover[0]" mode="aspectFill"></image>
 			</view>
 			<view class="listcard-content">
 				<view class="listcard-content__title">
-					{{item.title}}
+					<text>{{item.title}}</text>
+					<likes></likes>
 				</view>
 				<view class="listcard-content__des">
 					<view class="listcard-content__des-label">
@@ -80,6 +83,11 @@
 			return {
 
 			};
+		},
+		methods: {
+			open () {
+				console.log('详情')
+			}
 		}
 	}
 </script>
@@ -128,7 +136,6 @@
 					-webkit-line-clamp: 2;
 					-webkit-box-orient: vertical;
 				}
-
 			}
 
 			.listcard-content__des {

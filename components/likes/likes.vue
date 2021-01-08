@@ -1,6 +1,6 @@
 <template>
 	<view class="icons" @click.stop="likeTap">
-		<uni-icons size="20" color="#f07373" :type="like ? 'heart-filled' : 'heart'"></uni-icons>
+		<uni-icons size="20" color="#f07373" :type="item.is_like ? 'heart-filled' : 'heart'"></uni-icons>
 	</view>
 </template>
 
@@ -15,21 +15,27 @@
 			}
 		},
 		data() {
-			return {
-				like: false
-			};
+			return {};
 		},
 		methods: {
 			likeTap () {
-				console.log('收藏')
-				this.like = !this.like
+				this.item.is_like = !this.item.is_like
 				this.setUpdateLikes()
 			},
-			setUpdateLikes () {
-				this.$api.update_like({
+			async setUpdateLikes () {
+				uni.showLoading()
+				const param = {
 					user_id: '5fe08853ee98e30001c0e7ca',
 					article_id: this.item._id
-				})
+				}
+				const {code} = await this.$api.update_like(param)
+				if (code === 200) {
+					uni.showToast({
+						title: this.item.is_like ? '收藏成功' : '取消收藏',
+						icon: 'none'
+					})
+				}
+				uni.hideLoading()
 			}
 		}
 	}

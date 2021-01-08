@@ -3,13 +3,8 @@
 const db = uniCloud.database()
 const $ = db.command.aggregate
 exports.main = async (event, context) => {
-	const {name, user_id, page=1, pageSize=10} = event
-	let matchObj = {}
-	if (name !== '全部') {
-		matchObj = {
-			classify: name
-		}
-	}
+	const {value, user_id} = event
+	
 	// 获取用户信息数据
 	const userinfo = await db.collection('user').doc(user_id).get()
 	const article_likes_ids = userinfo.data[0].article_likes_ids
@@ -21,14 +16,12 @@ exports.main = async (event, context) => {
 		// article 表中"_id" 里面是否存在 "article_likes_ids" 数组中
 		is_like: $.in(['$_id', article_likes_ids])
 	})
-	.match(matchObj)
 	.project({
 		content: false
 	})
-	// 要跳过多少数据
-	.skip(pageSize * (page - 1))
-	// 限制返回的数据
-	.limit(pageSize)
+	.match({
+		title: new RegExp(value)
+	})
 	.end()
 	//返回数据给客户端
 	return {

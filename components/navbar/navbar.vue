@@ -4,32 +4,53 @@
 			<!-- 状态栏的高度 -->
 			<view :style="{height: statusBarHeight + 'px'}"></view>
 			<!-- 导航栏内容 -->
-			<view class="navbar-content" :style="{height: navBarHeight + 'px', width: windowWidth + 'px'}">
-				<view class="navbar-search">
+			<view class="navbar-content" :style="{height: navBarHeight + 'px', width: windowWidth + 'px'}" :class="{search: isSearch}"
+			 @click.stop="open">
+				<view class="navbar-content__search-icons" @click="onBack">
+					<uni-icons type="back" size="22" color="#fff"></uni-icons>
+				</view>
+				<view v-if="!isSearch" class="navbar-search">
 					<view class="navbar-search_icon">
-						<!-- <text class="iconfont icon-search"></text> -->
 						<uni-icons type="search" size="16" color="#999"></uni-icons>
 					</view>
-					<view class="navbar-search_text">uni-app vie</view>
+					<view class="navbar-search_text">uni-app</view>
+				</view>
+				<view v-else class="navbar-search">
+					<!-- 搜索页显示 -->
+					<input 
+						type="text" 
+						class="navbar-search_text" 
+						value="test" 
+						v-model="val" 
+						@blur="inputChange" 
+						placeholder="请输入您要搜索的内容"
+					>
 				</view>
 			</view>
-			
+
 		</view>
-		
+
 		<view :style="{height: statusBarHeight + navBarHeight + 'px'}"></view>
 	</view>
 </template>
 
 <script>
 	export default {
+		props: {
+			isSearch: {
+				type: Boolean,
+				default: false
+			}
+		},
 		data() {
 			return {
 				statusBarHeight: 20,
 				navBarHeight: 45,
 				windowWidth: 220,
+				val: '',
 			};
 		},
-		created () {
+		created() {
 			// 获取手机系统信息
 			const info = uni.getSystemInfoSync()
 			this.statusBarHeight = info.statusBarHeight
@@ -42,13 +63,30 @@
 			this.navBarHeight = (menuButtonInfo.bottom - info.statusBarHeight) + (menuButtonInfo.top - info.statusBarHeight)
 			this.windowWidth = menuButtonInfo.left
 			// #endif
+		},
+		methods: {
+			open() {
+				if (this.isSearch) return
+				uni.navigateTo({
+					url: '/pages/home-search/home-search'
+				})
+			},
+			onBack() {
+				uni.navigateBack({
+					delta: 1
+				});
+			},
+			inputChange (e) {
+				const {value} = e.detail
+				this.$emit('input', value)
+			}
 		}
 	}
 </script>
 
 <style lang="scss">
 	@import '../../common/css/icons.css';
-	
+
 	.navbar {
 		.navbar-fixed {
 			position: fixed;

@@ -86,7 +86,7 @@
 		},
 		methods: {
 			open () {
-				console.log('详情')
+				this.$emit('click', this.item)
 			}
 		}
 	}

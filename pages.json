@@ -18,7 +18,14 @@
 		    }
 		    
 		},
-		
+		{
+		    "path" : "pages/home-label/home-label",
+		    "style" :                                                                                    
+		    {
+				"navigationBarTitleText": "标签管理"
+		    }
+		    
+		},
 		{
 			"path": "pages/tabar/follow/follow",
 			"style": {

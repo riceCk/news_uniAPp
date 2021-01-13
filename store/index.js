@@ -21,7 +21,6 @@ const store = new Vuex.Store({
 	// 处理异步的方法；调用mutaions中的方法
 	actions: {
 		set_history ({commit, state}, history) {
-			debugger
 			let list = state.historyLists
 			list.unshift(history)
 			uni.setStorageSync('__history', list)

@@ -3,21 +3,31 @@
 */
 <template>
 	<view class="home">
-		<navbar :isSearch="true" @input="change"></navbar>
+		<navbar v-model="value"  :isSearch="true" @input="change"></navbar>
 		<view class="home-list">
 			<view v-if="is_histroy" class="label-box">
 				<view class="label-header">
 					<text class="label-title">搜索历史</text>
-					<text class="label-clear">清空</text>
+					<text class="label-clear" @click="clear">清空</text>
 				</view>
 				<view v-if="historyLists.length > 0" class="label-content">
-					<view class="label-content__item" v-for="item in historyLists"> {{item.name}} </view>
+					<view 
+						class="label-content__item" 
+						v-for="(item, index) in historyLists" 
+						:key="index"
+						@click="openHistroy(item)">
+						{{item.name}}
+					</view>
 				</view>
 				<view v-else class="no-data">没有搜索历史</view>
 			</view>
 			<list-scroll v-else class="list-scroll">
-				<list-card :mode="item.mode" :item="item" v-for="(item, index) in searchList" :key="index" @click="setHistory">
-				</list-card>
+				<uni-load-more v-show="loading" status="loading" iconType="snow"></uni-load-more>
+				<view v-if="searchList.length > 0">
+					<list-card :mode="item.mode" :item="item" v-for="(item, index) in searchList" :key="index" @click="setHistory">
+					</list-card>
+				</view>
+				<view v-if="!loading && searchList.length == 0" class="no-data">没有搜索到相关数据</view>
 			</list-scroll>
 		</view>
 	</view>
@@ -35,6 +45,7 @@
 				mark: undefined,
 				timer: undefined,
 				value: '',
+				loading: true
 			}
 		},
 		computed: {
@@ -49,7 +60,7 @@
 					clearTimeout(this.timer)
 					this.mark = false
 					this.getSearch(value)
-					return
+					return 
 				}
 				this.is_histroy = false
 				// 做标记
@@ -62,20 +73,34 @@
 				}
 			},
 			// 记录查询记录
-			// 
 			async getSearch(value) {
 				if (!value) {
 					this.searchList = []
 					this.is_histroy = true
 					return
 				}
+				this.loading = true
+				this.is_histroy = false
 				const { data } = await this.$api.get_search({value})
 				this.searchList = data
+				this.loading = false
 			},
 			// 点击事件, // 记录查询记录
 			setHistory (item) {
 				this.$store.dispatch('set_history', {
 					name: this.value
+				})
+			},
+			// 点击历史记录搜索
+			openHistroy (item) {
+				this.value = item.name
+				this.getSearch(this.value)
+			},
+			// 清空历史记录
+			clear () {
+				this.$store.dispatch('clear_history')
+				uni.showToast({
+					title: '清空完成'
 				})
 			}
 		}

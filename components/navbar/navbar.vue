@@ -6,7 +6,7 @@
 			<!-- 导航栏内容 -->
 			<view class="navbar-content" :style="{height: navBarHeight + 'px', width: windowWidth + 'px'}" :class="{search: isSearch}"
 			 @click.stop="open">
-				<view class="navbar-content__search-icons" @click="onBack">
+				<view v-if="isSearch" class="navbar-content__search-icons" @click="onBack">
 					<uni-icons type="back" size="22" color="#fff"></uni-icons>
 				</view>
 				<view v-if="!isSearch" class="navbar-search">
@@ -37,6 +37,10 @@
 <script>
 	export default {
 		props: {
+			value: {
+				type: [String, Number],
+				default: ''
+			},
 			isSearch: {
 				type: Boolean,
 				default: false
@@ -49,6 +53,11 @@
 				windowWidth: 220,
 				val: '',
 			};
+		},
+		watch: {
+			value (newVal) {
+				this.val = newVal
+			}
 		},
 		created() {
 			// 获取手机系统信息
@@ -72,8 +81,8 @@
 				})
 			},
 			onBack() {
-				uni.navigateBack({
-					delta: 1
+				uni.switchTab({
+					url: "/pages/tabar/index/index"
 				});
 			},
 			inputChange (e) {

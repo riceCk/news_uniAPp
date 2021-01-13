@@ -45,7 +45,6 @@
 				this.$emit('tab', {data: item, index})
 			},
 			open () {
-				console.log(8789789)
 				uni.navigateTo({
 					url: '/pages/home-label/home-label'
 				})

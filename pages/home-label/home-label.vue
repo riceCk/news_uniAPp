@@ -3,12 +3,12 @@
 		<view class="label-box">
 			<view class="label-header">
 				<view class="label-title">我的标签</view>
-				<view class="label-edit">编辑</view>
+				<view class="label-edit" @click="editLabel">{{is_edit ? '完成' : '编辑'}}</view>
 			</view>
 			<view class="label-content">
-				<view class="label-content__item" v-for="(item) in 10">
-				{{item}}标签
-				<uni-icons type="clear" size="20" color="red" class="icons-close"></uni-icons>
+				<view class="label-content__item" v-for="(item, index) in labelList" :key="item._id">
+				{{item.name}}
+					<uni-icons v-if="is_edit" type="clear" size="20" color="red" class="icons-close" @click="del(index)"></uni-icons>
 				</view>
 			</view>
 		</view>
@@ -17,7 +17,13 @@
 				<view class="label-title">标签推荐</view>
 			</view>
 			<view class="label-content">
-				<view class="label-content__item" v-for="(item) in 10">{{item}}标签</view>
+				<view 
+					class="label-content__item" 
+					@click="add(index)"
+					v-for="(item, index) in list" 
+					:key="item._id">
+					{{item.name}}
+				</view>
 			</view>
 		</view>
 	</view>
@@ -27,11 +33,34 @@
 	export default {
 		data() {
 			return {
-				
+				is_edit: false,
+				labelList: [],
+				list: []
 			}
 		},
+		onLoad () {
+			this.getLabel()
+		},
 		methods: {
-			
+			editLabel () {
+				this.is_edit = !this.is_edit
+			},
+			async getLabel () {
+				const {data} = await this.$api.get_label({type: 'all'})
+				this.labelList = data.filter(item => item.current)
+				this.list = data.filter(item => !item.current)
+			},
+			// 删除我的标签
+			del (index) {
+				this.list.push(this.labelList[index])
+				this.labelList.splice(index, 1)
+			},
+			// 新增我的标签
+			add (index) {
+				if (!this.is_edit) return
+				this.labelList.push(this.list[index])
+				this.list.splice(index, 1)
+			}
 		}
 	}
 </script>

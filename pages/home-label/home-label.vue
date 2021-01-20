@@ -5,10 +5,14 @@
 				<view class="label-title">我的标签</view>
 				<view class="label-edit" @click="editLabel">{{is_edit ? '完成' : '编辑'}}</view>
 			</view>
-			<view class="label-content">
-				<view class="label-content__item" v-for="(item, index) in labelList" :key="item._id">
-				{{item.name}}
+			<uni-load-more v-if="loading" status="loading" iconType="snow"></uni-load-more>
+			<view v-else class="label-content">
+				<view  class="label-content__item" v-for="(item, index) in labelList" :key="item._id">
+					{{item.name}}
 					<uni-icons v-if="is_edit" type="clear" size="20" color="red" class="icons-close" @click="del(index)"></uni-icons>
+				</view>
+				<view v-if="labelList.length === 0 && !loading" class="no-data">
+					当前没有数据
 				</view>
 			</view>
 		</view>
@@ -16,13 +20,17 @@
 			<view class="label-header">
 				<view class="label-title">标签推荐</view>
 			</view>
-			<view class="label-content">
+			<uni-load-more v-if="loading" status="loading" iconType="snow"></uni-load-more>
+			<view v-else class="label-content">
 				<view 
 					class="label-content__item" 
 					@click="add(index)"
 					v-for="(item, index) in list" 
 					:key="item._id">
 					{{item.name}}
+				</view>
+				<view v-if="list.length === 0 && !loading" class="no-data">
+					当前没有数据
 				</view>
 			</view>
 		</view>
@@ -35,7 +43,8 @@
 			return {
 				is_edit: false,
 				labelList: [],
-				list: []
+				list: [],
+				loading: true
 			}
 		},
 		onLoad () {
@@ -44,9 +53,15 @@
 		methods: {
 			editLabel () {
 				this.is_edit = !this.is_edit
+				if (!this.is_edit) {
+					const newArrIds = this.labelList.map(item => item._id)
+					this.setUpdateLabel(newArrIds)
+				}
 			},
 			async getLabel () {
+				this.loading = true
 				const {data} = await this.$api.get_label({type: 'all'})
+				this.loading = false
 				this.labelList = data.filter(item => item.current)
 				this.list = data.filter(item => !item.current)
 			},
@@ -60,6 +75,16 @@
 				if (!this.is_edit) return
 				this.labelList.push(this.list[index])
 				this.list.splice(index, 1)
+			},
+			async setUpdateLabel (label) {
+				uni.showLoading()
+				const res = await this.$api.update_label({label})
+				uni.hideLoading()
+				uni.showToast({
+					title: '更新成功',
+					icon: 'none'
+				})
+				uni.$emit('labelChange')
 			}
 		}
 	}
@@ -109,5 +134,12 @@
 				}
 			}
 		}
+	}
+	.no-data {
+		padding: 50px 0;
+		width: 100%;
+		color: #999;
+		font-size: 14px;
+		text-align: center;
 	}
 </style>

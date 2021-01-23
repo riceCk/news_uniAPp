@@ -86,7 +86,20 @@
 		},
 		methods: {
 			open () {
-				this.$emit('click', this.item)
+				const item = this.item	
+				this.$emit('click', item)
+				const params = {
+					_id: item._id,
+					title: item.titile,
+					create_time: item.create_time,
+					thumbs_up_count: item.thumbs_up_count,
+					browse_count: item.browse_count,
+					author: item.author
+				}
+				
+				uni.navigateTo({
+					url: '/pages/home-detail/home-detail?params=' + JSON.stringify(params)
+				})
 			}
 		}
 	}

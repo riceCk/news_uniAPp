@@ -13,16 +13,25 @@
 				</view>
 				<view class="detail-header__content-info">
 					<text>{{formData.create_time}}</text>
-					<text>1231 浏览</text>
-					<text>1231 赞</text>
+					<text>{{formData.browse_count}} 浏览</text>
+					<text>{{formData.thumbs_count}} 赞</text>
 				</view>
 			</view>
 		</view>
 		<view class="detail-content">
-			详情数据
+			<div class="detail-html" >
+				<!-- <u-parse :content="formData.content" :noData="noData"></u-parse> -->
+				内容
+			</div>
+			<view class="detail-comment">
+				<view class="comment-title">最新评论</view>
+				<view class="comment-content" v-for="item in commentsList" :key="item.comment_id">
+					<comments-box :comments="item" @reply="reply"></comments-box>
+				</view>
+			</view>
 		</view>
 		<view class="detail-bottom">
-			<view class="detail-bottom__icons-box">
+			<view class="detail-bottom__input" @click="openComment">
 				<text>谈谈你的看法</text>
 				<uni-icons type="compose" size="16" color="#f07373"></uni-icons>
 			</view>
@@ -38,22 +47,73 @@
 				</view>
 			</view>
 		</view>
+		<release ref="popup" @submit="submit"></release>
 	</view>
 </template>
 
 <script>
+	import uParse from '@/components/gaoyia-parse/parse.vue'
 	export default {
+		components: {
+			uParse
+		},
 		data() {
 			return {
-				formData: {}
+				formData: {},
+				replyFormData: {},
+				noData: '<p style="text-align: center: color: #666">详情加载中</p>',
+				commentsList: [],
 			}
 		},
 		onLoad(query) {
 			this.formData = JSON.parse(query.params)
-			console.log(this.formData)
+			this.getDetail()
+			this.getComments()
+		},
+		onReady () {
+			
 		},
 		methods: {
-			
+			openComment () {
+				this.$refs.popup.open()
+			},
+			async getDetail () {
+				const {data} = await this.$api.get_detail({article_id: this.formData._id})
+				this.formData = data 
+			},
+			// 发布
+			submit(content){
+				this.setUpdateComment({content,...this.replyFormData})
+			},
+			async setUpdateComment (content) {
+				const formdata = {
+					article_id: this.formData._id,
+					...content
+				}
+				uni.showLoading()
+				const res = await this.$api.update_comment(formdata)
+				uni.hideLoading()
+				uni.showToast({
+					title: '评论发布成功',
+					icon: 'none'
+				})
+				this.getComments()
+				this.$refs.popup.close()
+			},
+			// 请求评论内容
+			async getComments () {
+				const {data} = await this.$api.get_comments({
+					article_id: this.formData._id,
+				})
+				this.commentsList = data
+			},
+			// 调用回复方法
+			reply (e) {
+				this.replyFormData = {
+					"comment_id": e.comment_id
+				}
+				this.openComment()
+			}
 		}
 	}
 </script>

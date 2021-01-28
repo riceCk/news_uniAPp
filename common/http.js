@@ -14,8 +14,8 @@ export default function $http(options) {
 			} else {
 				reject(result)
 			}
-		}, () => {
-			reject(result)
+		}, (error) => {
+			reject(error)
 		})
 	})
 }

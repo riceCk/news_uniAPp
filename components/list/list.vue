@@ -37,7 +37,15 @@
 				this.getList(this.tabIndex)
 			}
 		},
-		created() {},
+		created() {
+			uni.$on('update_article', (e) => {
+				if (e === 'follow') {
+					this.load = {}
+					this.listCatchData = {}
+					this.getList(this.tabIndex)
+				}
+			})
+		},
 		methods: {
 			loadmore () {
 				if (this.load[this.tabIndex].loading === 'noMore') return

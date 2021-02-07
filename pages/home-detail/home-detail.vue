@@ -14,14 +14,14 @@
 				<view class="detail-header__content-info">
 					<text>{{formData.create_time}}</text>
 					<text>{{formData.browse_count}} 浏览</text>
-					<text>{{formData.thumbs_count}} 赞</text>
+					<text>{{formData.thumbs_up_count}} 赞</text>
 				</view>
 			</view>
+			<button class="detail-header__button" type="defualt" @click="follow(formData.author.id)">{{formData.is_author_like ? '取消关注' : '关注'}}</button>
 		</view>
 		<view class="detail-content">
 			<div class="detail-html" >
-				<!-- <u-parse :content="formData.content" :noData="noData"></u-parse> -->
-				内容
+				<u-parse :content="formData.content" :noData="noData"></u-parse>
 			</div>
 			<view class="detail-comment">
 				<view class="comment-title">最新评论</view>
@@ -36,14 +36,14 @@
 				<uni-icons type="compose" size="16" color="#f07373"></uni-icons>
 			</view>
 			<view class="detail-bottom__icons">
-				<view class="detail-bottom__icons-box">
+				<view class="detail-bottom__icons-box" @click="open">
 					<uni-icons type="chat" size="22" color="#f07373"></uni-icons>
 				</view>
-				<view class="detail-bottom__icons-box">
-					<uni-icons type="heart" size="22" color="#f07373"></uni-icons>
+				<view class="detail-bottom__icons-box" @click="likeTap">
+					<uni-icons :type="formData.is_like ? 'heart-filled' : 'heart'" size="22" color="#f07373"></uni-icons>
 				</view>
 				<view class="detail-bottom__icons-box">
-					<uni-icons type="hand-thumbsup" size="22" color="#f07373"></uni-icons>
+					<uni-icons :type="formData.is_thumbs_up ? 'hand-thumbsup-filled' : 'hand-thumbsup'" size="22" color="#f07373" @click="thumbsUpTap"></uni-icons>
 				</view>
 			</view>
 		</view>
@@ -74,17 +74,27 @@
 			
 		},
 		methods: {
+			// 打开评论详情页面
+			open () {
+				uni.navigateTo({
+					url: `../detail-comments/detail-comments?id=${this.formData._id}`
+				})
+			},
 			openComment () {
 				this.$refs.popup.open()
 			},
 			async getDetail () {
 				const {data} = await this.$api.get_detail({article_id: this.formData._id})
-				this.formData = data 
+				this.formData = data
 			},
 			// 发布
 			submit(content){
 				this.setUpdateComment({content,...this.replyFormData})
 			},
+			/**
+			 * 更新评论
+			 * @param {Object} content
+			 */
 			async setUpdateComment (content) {
 				const formdata = {
 					article_id: this.formData._id,
@@ -99,6 +109,7 @@
 				})
 				this.getComments()
 				this.$refs.popup.close()
+				this.replyFormData = {}
 			},
 			// 请求评论内容
 			async getComments () {
@@ -111,9 +122,55 @@
 			reply (e) {
 				console.log(e, 8978978)
 				this.replyFormData = {
-					"comment_id": e.comment_id
+					"comment_id": e.comments.comment_id,
+					"is_reply": e.is_reply
+				}
+				if (e.comments.reply_id) {
+					this.replyFormData.reply_id = e.comments.reply_id
 				}
 				this.openComment()
+			},
+			// 关注、取消关注作者
+			 follow (author_id) {
+				this.setUpdateAuthor(author_id)
+			},
+			async setUpdateAuthor (author_id) {
+				uni.showLoading()
+				await this.$api.update_author({author_id})
+				uni.hideLoading()
+				this.formData.is_author_like = !this.formData.is_author_like
+				uni.showToast({
+					title: this.formData.is_author_like ? '关注成功' : '取消关注',
+					icon: "none"
+				})
+			},
+			// 收藏喜欢
+			async likeTap (article_id) {
+				uni.showLoading()
+				await this.$api.update_like({article_id: this.formData._id})
+				uni.hideLoading()
+				this.formData.is_like = !this.formData.is_like
+				uni.$emit('update_article')
+				uni.showToast({
+					title: this.formData.is_like ? '收藏成功' : '取消收藏',
+					icon: "none"
+				})
+			},
+			thumbsUpTap () {
+				this.setThumbsUp()
+			},
+			// 是否点赞
+			async setThumbsUp () {
+				uni.showLoading()
+				await this.$api.update_thumbs_up({article_id: this.formData._id})
+				uni.hideLoading()
+				this.formData.is_thumbs_up = !this.formData.is_thumbs_up
+				this.formData.is_thumbs_up ? this.formData.thumbs_up_count++ : this.formData.thumbs_up_count--
+				uni.$emit('update_article')
+				uni.showToast({
+					title: this.formData.is_thumbs_up ? '点赞成功' : '取消点赞',
+					icon: "none"
+				})
 			}
 		}
 	}

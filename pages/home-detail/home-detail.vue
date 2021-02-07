@@ -109,6 +109,7 @@
 			},
 			// 调用回复方法
 			reply (e) {
+				console.log(e, 8978978)
 				this.replyFormData = {
 					"comment_id": e.comment_id
 				}

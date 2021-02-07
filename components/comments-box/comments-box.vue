@@ -60,12 +60,10 @@
 		methods: {
 			commentsReply (comment) {
 				// 是主回复还是子回复
-				debugger
 				if (comment.is_reply) {
 					comment.comments.reply_id = comment.comments.comment_id
 					comment.comments.comment_id = this.comments.comment_id
 				}
-				console.log(comment, 979898)
 				this.$emit('reply', comment)
 			}
 		}

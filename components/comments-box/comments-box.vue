@@ -5,7 +5,8 @@
 				<image :src="comments.author.avatar" mode="aspectFill"></image>
 			</view>
 			<view class="comments-header__info">
-				<view class="title">{{comments.author.author_name}}</view>
+				<view v-if="!comments.is_reply" class="title">{{comments.author.author_name}}</view>
+				<view v-else class="title">{{comments.author.author_name}} <text class="reply-text">回复</text>{{comments.to}}</view>
 				<view>{{comments.create_time | formatTime}}</view>
 			</view>
 		</view>
@@ -60,12 +61,10 @@
 		methods: {
 			commentsReply (comment) {
 				// 是主回复还是子回复
-				debugger
 				if (comment.is_reply) {
 					comment.comments.reply_id = comment.comments.comment_id
 					comment.comments.comment_id = this.comments.comment_id
 				}
-				console.log(comment, 979898)
 				this.$emit('reply', comment)
 			}
 		}

@@ -1,7 +1,7 @@
 export default function $http(options) {
 	const {url, data} = options
 	const dataObj  = {
-		"user_id": "5fe08853ee98e30001c0e7ca",
+		"user_id": "5fe08853ee98e30001c0e7cc",
 		...data
 	}
 	return new Promise((reslove, reject) => {

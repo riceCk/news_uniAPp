@@ -7,11 +7,11 @@
 			</view>
 		</view>
 		<view class="follow-list">
-			<swiper class="follow-list__swiper">
+			<swiper class="follow-list__swiper" :current="activeIndex" @change="change">
 				<swiper-item >
 					<list-scroll>
-						<uni-load-more v-if="list.length === 0 && !articleShow" iconType="snow" status="loading"></uni-load-more>
-						<view class="no-data" v-if="articleShow">没有数据</view>
+						<uni-load-more v-if="list.length === 0 && !followShow" iconType="snow" status="loading"></uni-load-more>
+						<view class="no-data" v-if="followShow">没有收藏文章</view>
 						<list-card 
 							v-for="(item, index) in list" 
 							types="follow"
@@ -23,7 +23,9 @@
 				</swiper-item>
 				<swiper-item>
 					<list-scroll>
-						<view v-for="item in 30">{{item}}</view>
+						<uni-load-more v-if="authorLists.length === 0 && !articleShow" iconType="snow" status="loading"></uni-load-more>
+						<view class="no-data" v-if="articleShow">没有关注作者</view>
+						<list-author v-for="(item, index) in authorLists" :key="index" :item="item"></list-author>
 					</list-scroll>
 				</swiper-item>
 			</swiper>
@@ -38,15 +40,21 @@
 			return {
 				activeIndex: 0,
 				list: [],
-				articleShow: false
+				authorLists: [],
+				articleShow: false,
+				followShow: false
 			}
 		},
 		onLoad () {
-			this.getFollow()
 			// 自定义事件只能在打开的页面触发
 			uni.$on('update_article', (e) => {
 				this.getFollow()
 			})
+			uni.$on('update_author', () => {
+				this.getAuhtor()
+			})
+			this.getFollow()
+			this.getAuhtor()
 		},
 		methods: {
 			tab (index) {
@@ -55,7 +63,17 @@
 			async getFollow () {
 				const {data} = await this.$api.get_follow()
 				this.list = data.data
-				this.articleShow = this.list.length === 0 ? true : false
+				console.log(data.data, 88888888)
+				this.followShow = this.list.length === 0 ? true : false
+			},
+			async getAuhtor () {
+				const {data} = await this.$api.get_author()
+				this.authorLists = data.data
+				console.log(data.data, 87989789)
+				this.articleShow = this.authorLists.length === 0 ? true : false
+			},
+			change (data) {
+				this.activeIndex = data.detail.current
 			}
 		}
 	}

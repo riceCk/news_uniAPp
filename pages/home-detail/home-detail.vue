@@ -137,6 +137,7 @@
 			async setUpdateAuthor (author_id) {
 				uni.showLoading()
 				await this.$api.update_author({author_id})
+				uni.$emit('update_author')
 				uni.hideLoading()
 				this.formData.is_author_like = !this.formData.is_author_like
 				uni.showToast({

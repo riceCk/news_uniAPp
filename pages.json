@@ -57,6 +57,15 @@
             }
             
         }
+        ,{
+            "path" : "components/list-author/list-author",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

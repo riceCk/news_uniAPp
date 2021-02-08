@@ -5,7 +5,7 @@
 			"style": {
 				"navigationStyle":"custom",
 				"navigationBarTextStyle":"white",
-				"navigationBarTitleText":"uni-app"
+				"navigationBarTitleText":"首页"
 			}
 		},
 		{
@@ -14,7 +14,7 @@
 		    {
 		        "navigationStyle":"custom",
 		        "navigationBarTextStyle":"white",
-		        "navigationBarTitleText":"uni-app"
+		        "navigationBarTitleText":"搜索"
 		    }
 		    
 		},
@@ -29,13 +29,13 @@
 		{
 			"path": "pages/tabar/follow/follow",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "个人收藏"
 			}
 		},
 		{
 			"path": "pages/tabar/my/my",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "个人中心"
 			}
 		}
 		
@@ -43,7 +43,7 @@
             "path" : "pages/home-detail/home-detail",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "uni-app",
+                "navigationBarTitleText": "首页详情",
                 "enablePullDownRefresh": false
             }
             
@@ -52,13 +52,31 @@
             "path" : "pages/detail-comments/detail-comments",
             "style" :                                                                                    
             {
-                "navigationBarTitleText": "",
+                "navigationBarTitleText": "详情",
                 "enablePullDownRefresh": false
             }
             
         }
         ,{
             "path" : "components/list-author/list-author",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/my-article/my-article",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的文章",
+                "enablePullDownRefresh": false
+            }
+            
+        }
+        ,{
+            "path" : "pages/feedback/feedback",
             "style" :                                                                                    
             {
                 "navigationBarTitleText": "",

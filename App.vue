@@ -1,13 +1,15 @@
 <script>
 	export default {
 		onLaunch: function() {
-			console.log('App Launch')
+			this.$api.get_user({
+				user_id: '5fe08853ee98e30001c0e7cc',
+			}).then(({data}) => {
+				this.$store.dispatch('set_user_info', data)
+			})
 		},
 		onShow: function() {
-			console.log('App Show')
 		},
 		onHide: function() {
-			console.log('App Hide')
 		}
 	}
 </script>
